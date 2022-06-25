@@ -34,16 +34,16 @@ public class AccountControllerTest {
      */
 
     @Test
-    public void CreaCuenta(@Autowired WebTestClient client){
-
+    public void createAccount(@Autowired WebTestClient client){
         Account account = new Account();
 
         client.post()
                 .uri("/account")
                 .accept(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(account))
                 .exchange()
                 .expectStatus()
-                .isNotFound();
+                .isOk();
 
 
     }
