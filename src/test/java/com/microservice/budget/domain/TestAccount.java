@@ -6,13 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 1 crear una representacion de una cuenta
- * empieza con un balance 0
- * Puedo depositar dinero
- * puedo retirar dinero
- * no tiene limite maximo
- * no puede tener menos de 0
- * no puede tener un balance menor a 0
+ * Test orientado a probar comportamiento
  */
 public class TestAccount {
     /**
@@ -22,7 +16,7 @@ public class TestAccount {
      */
     @Test
     public void testAccountInitialBalanceZero() {
-        Account account = new Account();
+        Account account = new Account(0);
         Double balance = account.getBalance();
         assertEquals(0.0, balance);
     }
@@ -91,7 +85,7 @@ public class TestAccount {
             account.withDraw(7);
             account.withDraw(7);
             account.withDraw(7); //Este ultimo dejara el saldo en negativo
-            //Si pasa a esta linea se muere el test
+            //Si llega a esta linea se muere el test
             fail(); //fuerzo el fallo ya que la 1,2,3 ejecuciones no manda la exception fuerzo a que el test se caiga.
         } catch (InvalidAmountException exception) {
             //Validamos el aserto en el segundo retiro
@@ -99,5 +93,23 @@ public class TestAccount {
             assertEquals(6.0, account.getBalance());
         }
     }
+
+    /**
+     * Dado que tengo una cuenta que inicia en 100 000 000
+     * cuando hago un deposito que lo deja por encima del valor maximo soportado
+     * debe arrojar error
+     */
+    @Test
+    public void testDepositByTopLimit() {
+        Account account = new Account(100000000.00);
+        // spike cuanto seria lo que tengo que sumar
+        // ME FALTA UN +1 PARA QUE CAUSE EL ERROR
+        double valorASumar = Double.MAX_VALUE - account.getBalance();
+
+        assertThrows(InvalidAmountException.class, () -> {
+            account.deposit(valorASumar + 1);
+        });
+    }
+
 
 }
