@@ -1,4 +1,4 @@
-package com.microservice.budget.Exception;
+package com.microservice.budget.error.exception;
 /**
 Throwable
  heredan: Error y Exception

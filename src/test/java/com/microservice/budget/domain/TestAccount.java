@@ -1,12 +1,13 @@
 package com.microservice.budget.domain;
 
-import com.microservice.budget.Exception.InvalidAmountException;
+import com.microservice.budget.error.exception.InvalidAmountException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test orientado a probar comportamiento
+ * Lo minimo necesario para que le test pase :d
  */
 public class TestAccount {
     /**
@@ -16,7 +17,7 @@ public class TestAccount {
      */
     @Test
     public void testAccountInitialBalanceZero() {
-        Account account = new Account(0);
+        Account account = new Account("cuenta",0);
         Double balance = account.getBalance();
         assertEquals(0.0, balance);
     }
@@ -42,7 +43,7 @@ public class TestAccount {
      */
     @Test
     public void testWithDraw() {
-        Account account = new Account(20.0);
+        Account account = new Account("", 20.0);
         account.withDraw(14.0);
         assertEquals(6, account.getBalance());
     }
@@ -54,7 +55,7 @@ public class TestAccount {
     @Test
     public void testInitialBalanceNegative() {
         assertThrows(InvalidAmountException.class, () -> {
-            new Account(-10.0);
+            new Account("", -10.0);
         });
     }
 
@@ -65,7 +66,7 @@ public class TestAccount {
      */
     @Test()
     public void testWithDrawBalanceNegative() {
-        Account account = new Account(15);
+        Account account = new Account("",15);
 
         assertThrows(InvalidAmountException.class, () -> {
             account.withDraw(100);
@@ -80,7 +81,7 @@ public class TestAccount {
     @Test
     public void testMultipleWithDraw() {
         // Testeamos dos cosas 1: Saldo negativo 2: A que me "aserte" el segundo retiro wao:0
-        Account account = new Account(20);
+        Account account = new Account("",20);
         try {
             account.withDraw(7);
             account.withDraw(7);
@@ -101,7 +102,7 @@ public class TestAccount {
      */
     @Test
     public void testDepositByTopLimit() {
-        Account account = new Account(100000000.00);
+        Account account = new Account("",100000000.00);
         // spike cuanto seria lo que tengo que sumar
         // ME FALTA UN +1 PARA QUE CAUSE EL ERROR
         double valorASumar = Double.MAX_VALUE - account.getBalance();
@@ -110,6 +111,4 @@ public class TestAccount {
             account.deposit(valorASumar + 1);
         });
     }
-
-
 }
