@@ -1,6 +1,5 @@
 package com.microservice.budget.controller;
 
-import com.microservice.budget.controller.WithDrawRequest;
 import com.microservice.budget.controller.request.DepositRequest;
 import com.microservice.budget.domain.Account;
 import org.apache.catalina.core.ApplicationContext;
@@ -57,7 +56,7 @@ public class AccountControllerTest {
 
     @Test
     public void createAccount(@Autowired WebTestClient client) {
-        Account account = new Account("Cuenta 01",0.00);
+        Account account = new Account("Cuenta 01", 0.00);
         client.post()
                 .uri("/account")
                 .accept(MediaType.APPLICATION_JSON)
@@ -74,17 +73,19 @@ public class AccountControllerTest {
      * Dado que tengo una cuenta con 20 soles
      * cuando consulto saldo
      * me devuelve 20
-     *
-     * @Test public void getStatusAccount(@Autowired WebTestClient client){
-     * client.get()
-     * .uri("/account/{accountName}","Ahorros")
-     * .exchange()
-     * .expectStatus().isOk()
-     * .expectBody()
-     * .jsonPath("$.name").isEqualTo("Ahorros")
-     * .jsonPath("$.balance").isEqualTo(20.0);
-     * }
-     * /**
+     */
+    @Test
+    public void getStatusAccount(@Autowired WebTestClient client) {
+        client.get()
+                .uri("/account/{accountName}", "Ahorros")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("Ahorros")
+                .jsonPath("$.balance").isEqualTo(20.0);
+    }
+
+    /**
      * Dado que tengo una cuenta llamada Ahorros con balance 20
      * cuando retiro 5
      * la cuenta debe tener 15
