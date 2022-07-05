@@ -3,6 +3,8 @@ package com.microservice.budget.domain;
 import com.microservice.budget.error.exception.InvalidAmountException;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
@@ -14,12 +16,13 @@ import javax.persistence.Id;
  */
 @Entity
 public class Account {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private double balance = 0.0;
     private String name;
     private int status;
 
-    private Long id;
 
     public Account() {
     }

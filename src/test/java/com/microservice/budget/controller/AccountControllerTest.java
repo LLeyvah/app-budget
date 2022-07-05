@@ -20,6 +20,12 @@ import org.springframework.web.reactive.function.BodyInserters;
  * Cerrar la cuenta
  */
 
+/**
+ * SpringBootTest Levanta todo la aplicacion y busca stereotipo
+ * levanta un controlador : encuentra al servicio y este busca su implementacion
+ * anotandose con el @service .
+ */
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 public class AccountControllerTest {
@@ -103,6 +109,25 @@ public class AccountControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk();
+
+    }
+
+    /**
+     * Dado que tengo una cuenta llamada "Ahorros"
+     * cuando consulto la cuenta por nombre
+     * me devuelve la cuenta solicitada
+     *
+     * @param client
+     */
+    @Test
+    public void getAccountByName(@Autowired WebTestClient client) {
+        client.get()
+                .uri("/account/{accountName}", "AHORROS_LEO")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("AHORROS_LEO");
+
 
     }
 }
