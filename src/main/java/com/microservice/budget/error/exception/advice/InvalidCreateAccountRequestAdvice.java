@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class InvalidCreateAccountRequestAdvice {
-    @ResponseBody
+
+
+    @ResponseBody  //Armando el body de response
     @ExceptionHandler(InvalidCreateAccountRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     String invalidCreateAccountRequestHandler(InvalidCreateAccountRequestException ex){

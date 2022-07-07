@@ -5,7 +5,6 @@ import com.microservice.budget.domain.Account;
 import com.microservice.budget.error.exception.InvalidCreateAccountRequestException;
 import com.microservice.budget.repository.AccountRepository;
 import com.microservice.budget.service.AccountService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -33,24 +32,22 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     public Account create(@RequestBody Account account) {
         boolean validRequest = true;
+        Account savedAccount;
         validRequest &= account.getName() != null;
         if (validRequest) {
-            accounts.add(account);
+            savedAccount = accountRepository.save(account);
         } else {
             throw new InvalidCreateAccountRequestException(account);
         }
-        return account;
+        return savedAccount;
     }
 
     @GetMapping(value = {"/account/{accountName}"})
     @ResponseStatus(HttpStatus.OK)
     public Account getStatus(@PathVariable("accountName") String name) {
-        if (name.equals("Ahorros")) {
-            Account account = new Account(name, 20);
-            return account;
-        } else {
-            return accountRepository.findByName(name);
-        }
+
+        return accountRepository.findByName(name);
+
     }
 
     @PostMapping(value = {"/account/{accountName}/withdraw"})

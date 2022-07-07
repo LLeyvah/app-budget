@@ -17,7 +17,7 @@ import javax.persistence.Id;
 @Entity
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double balance = 0.0;
     private String name;

@@ -76,22 +76,6 @@ public class AccountControllerTest {
     }
 
     /**
-     * Dado que tengo una cuenta con 20 soles
-     * cuando consulto saldo
-     * me devuelve 20
-     */
-    @Test
-    public void getStatusAccount(@Autowired WebTestClient client) {
-        client.get()
-                .uri("/account/{accountName}", "Ahorros")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.name").isEqualTo("Ahorros")
-                .jsonPath("$.balance").isEqualTo(20.0);
-    }
-
-    /**
      * Dado que tengo una cuenta llamada Ahorros con balance 20
      * cuando retiro 5
      * la cuenta debe tener 15
