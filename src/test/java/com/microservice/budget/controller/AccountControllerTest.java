@@ -3,7 +3,14 @@ package com.microservice.budget.controller;
 import com.microservice.budget.controller.request.DepositRequest;
 import com.microservice.budget.domain.Account;
 import org.apache.catalina.core.ApplicationContext;
+
+import org.dbunit.DBTestCase;
+import org.dbunit.PropertiesBasedJdbcDatabaseTester;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,12 +31,47 @@ import org.springframework.web.reactive.function.BodyInserters;
  * SpringBootTest Levanta todo la aplicacion y busca stereotipo
  * levanta un controlador : encuentra al servicio y este busca su implementacion
  * anotandose con el @service .
+ * <p>
+ * ACID TEST:TRANSACCIONES
+ * ATOMICO: SUCEDER O NO SUCEDER TX: RETIRAS DEPOSITAS Y HACES EL COMMIT Y SI HAY UNA EXCEPTION HACES LA REVERSION
+ * CONSISTENCIA: DATO SIEMPRE CONSISTENTE UN DETALLE SIN MAESTRO
+ * AISLAMIENTO: CONCURRENCIA - DOS PERSO DEPOSITAR AL MISMO TIEMPO: LA EJECUCION DE ESTAS TX NO DEBEN VERSE AFECTADAS
+ * O RETIRAR DOS VECES DE LA CUENTA.
+ * <p>
+ * SOLUCION: BLOQUEANDO TABLAS BLOQUEO DE LA ESCRITURA PERMITIENDO LECTURA
+ * DURABILIDAD:
  */
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-public class AccountControllerTest {
+public class AccountControllerTest extends DBTestCase {
+    //configuramos la conexion a la bd
+    public AccountControllerTest() {
+        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS, "com.mysql.cj.jdbc.Driver");
+        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL, "jdbc:mysql://${MYSQL_HOST:localhost}:49154/db_budget");
+        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME, "root");
+        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_PASSWORD, "root");
+        // System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_SCHEMA, "" );
+    }
 
+    //carga data xml
+    @Override
+    protected IDataSet getDataSet() throws Exception {
+        return new FlatXmlDataSetBuilder().build(getClass().getClassLoader()
+                .getResourceAsStream("AccountTest.xml"));
+    }
+
+    //REFRESCA DATA LIMPIA CACHE
+    @Override
+    protected DatabaseOperation getSetUpOperation() {
+        return DatabaseOperation.REFRESH;
+    }
+
+    //BORRA DATA AL INICIAR
+    @Override
+    protected DatabaseOperation getTearDownOperation() {
+        return DatabaseOperation.NONE;
+    }
 
     public void setUp(ApplicationContext applicationContext) {
     }
@@ -114,4 +156,24 @@ public class AccountControllerTest {
 
 
     }
+
+    /**
+     * Dado que tengo una cuenta llamada "ahorro" con balance de 20
+     * cuando deposito 5
+     * la cuenta tiene 25
+     */
+    @Test
+    public void depositAccount(@Autowired WebTestClient client) {
+        DepositRequest request = new DepositRequest(10.0);
+        client.post()
+                .uri("/account/{accountName}/deposit", "AHORROS_ALE")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("AHORROS_ALE")
+                .jsonPath("$.balance").isEqualTo(120.0);
+    }
+
+
 }

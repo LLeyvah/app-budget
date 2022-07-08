@@ -105,6 +105,7 @@ public class TestAccount {
         Account account = new Account("",100000000.00);
         // spike cuanto seria lo que tengo que sumar
         // ME FALTA UN +1 PARA QUE CAUSE EL ERROR
+        // EVITAR LLEGAR AL LIMITE
         double valorASumar = Double.MAX_VALUE - account.getBalance();
 
         assertThrows(InvalidAmountException.class, () -> {

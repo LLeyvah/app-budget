@@ -53,6 +53,16 @@ public class AccountController {
     @PostMapping(value = {"/account/{accountName}/withdraw"})
     @ResponseStatus(HttpStatus.OK)
     public Account withDraw(@RequestBody DepositRequest request, @PathVariable("accountName") String name) {
-        return null;
+        Account account = new Account(name, 15);
+        return account;
+    }
+
+    @PostMapping(value = {"/account/{accountName}/deposit"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account deposit(@RequestBody DepositRequest request, @PathVariable("accountName") String name) {
+        Account accountToDeposit = accountRepository.findByName(name);
+        accountToDeposit.deposit(request.getAmount());
+        Account savedAccount = accountRepository.save(accountToDeposit);
+        return savedAccount;
     }
 }
