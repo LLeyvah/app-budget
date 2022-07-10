@@ -3,14 +3,7 @@ package com.microservice.budget.controller;
 import com.microservice.budget.controller.request.DepositRequest;
 import com.microservice.budget.domain.Account;
 import org.apache.catalina.core.ApplicationContext;
-
-import org.dbunit.DBTestCase;
-import org.dbunit.PropertiesBasedJdbcDatabaseTester;
-import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,34 +37,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-public class AccountControllerTest extends DBTestCase {
+public class AccountControllerTest {
     //configuramos la conexion a la bd
-    public AccountControllerTest() {
-        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS, "com.mysql.cj.jdbc.Driver");
-        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL, "jdbc:mysql://${MYSQL_HOST:localhost}:49154/db_budget");
-        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME, "root");
-        System.setProperty(PropertiesBasedJdbcDatabaseTester.DBUNIT_PASSWORD, "root");
-        // System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_SCHEMA, "" );
-    }
 
-    //carga data xml
-    @Override
-    protected IDataSet getDataSet() throws Exception {
-        return new FlatXmlDataSetBuilder().build(getClass().getClassLoader()
-                .getResourceAsStream("AccountTest.xml"));
-    }
-
-    //REFRESCA DATA LIMPIA CACHE
-    @Override
-    protected DatabaseOperation getSetUpOperation() {
-        return DatabaseOperation.REFRESH;
-    }
-
-    //BORRA DATA AL INICIAR
-    @Override
-    protected DatabaseOperation getTearDownOperation() {
-        return DatabaseOperation.NONE;
-    }
 
     public void setUp(ApplicationContext applicationContext) {
     }
@@ -174,6 +142,4 @@ public class AccountControllerTest extends DBTestCase {
                 .jsonPath("$.name").isEqualTo("AHORROS_ALE")
                 .jsonPath("$.balance").isEqualTo(120.0);
     }
-
-
 }
