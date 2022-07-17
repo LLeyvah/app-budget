@@ -1,6 +1,7 @@
 package com.microservice.budget.domain;
 
 import com.microservice.budget.error.exception.InvalidAmountException;
+import com.microservice.budget.error.exception.UnavailableAccountException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,6 +27,12 @@ public class Account {
 
     public Account() {
     }
+    /**
+     *  * Estados
+     *      * 0 cerrada
+     *      * 1 abierta
+     *      * 2 bloqueada
+     */
 
     public Account(String name, double initialAmount) {
         if (initialAmount < 0.000000000000000000000) {
@@ -54,6 +61,9 @@ public class Account {
     public void withDraw(double amount) {
         if (amount > this.balance) {
             throw new InvalidAmountException();
+        }
+        if (status != 1) {
+            throw new UnavailableAccountException();
         }
         this.balance -= amount;
     }

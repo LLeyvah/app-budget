@@ -65,4 +65,13 @@ public class AccountController {
         Account savedAccount = accountRepository.save(accountToDeposit);
         return savedAccount;
     }
+
+    @PostMapping(value = {"/account/{name}/close"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account close(@PathVariable("name") String name) {
+        Account account = accountRepository.findByName(name);
+        account.setStatus(0);
+        return accountRepository.save(account);
+    }
+
 }

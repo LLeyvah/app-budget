@@ -1,6 +1,7 @@
 package com.microservice.budget.domain;
 
 import com.microservice.budget.error.exception.InvalidAmountException;
+import com.microservice.budget.error.exception.UnavailableAccountException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,7 @@ public class TestAccount {
      */
     @Test
     public void testAccountInitialBalanceZero() {
-        Account account = new Account("cuenta",0);
+        Account account = new Account("cuenta", 0);
         Double balance = account.getBalance();
         assertEquals(0.0, balance);
     }
@@ -66,7 +67,7 @@ public class TestAccount {
      */
     @Test()
     public void testWithDrawBalanceNegative() {
-        Account account = new Account("",15);
+        Account account = new Account("", 15);
 
         assertThrows(InvalidAmountException.class, () -> {
             account.withDraw(100);
@@ -81,7 +82,7 @@ public class TestAccount {
     @Test
     public void testMultipleWithDraw() {
         // Testeamos dos cosas 1: Saldo negativo 2: A que me "aserte" el segundo retiro wao:0
-        Account account = new Account("",20);
+        Account account = new Account("", 20);
         try {
             account.withDraw(7);
             account.withDraw(7);
@@ -102,7 +103,7 @@ public class TestAccount {
      */
     @Test
     public void testDepositByTopLimit() {
-        Account account = new Account("",100000000.00);
+        Account account = new Account("", 100000000.00);
         // spike cuanto seria lo que tengo que sumar
         // ME FALTA UN +1 PARA QUE CAUSE EL ERROR
         // EVITAR LLEGAR AL LIMITE
@@ -110,6 +111,20 @@ public class TestAccount {
 
         assertThrows(InvalidAmountException.class, () -> {
             account.deposit(valorASumar + 1);
+        });
+    }
+
+    /**
+     * Dado que tengo una cuenta en estado BLOQUEADO
+     * cuando intento un retiro
+     * debe arrojar un error
+     */
+    @Test
+    public void testWithDrawStatusInvalid() {
+        Account account = new Account("", 10000000.00);
+        account.setStatus(2);
+        assertThrows(UnavailableAccountException.class, () -> {
+            account.withDraw(1);
         });
     }
 }

@@ -134,12 +134,31 @@ public class AccountControllerTest {
     public void depositAccount(@Autowired WebTestClient client) {
         DepositRequest request = new DepositRequest(10.0);
         client.post()
-                .uri("/account/{accountName}/deposit", "AHORROS_ALE")
+                .uri("/account/{accountName}/deposit", "AHORROS_X")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(request))
                 .exchange()
                 .expectBody()
-                .jsonPath("$.name").isEqualTo("AHORROS_ALE")
+                .jsonPath("$.name").isEqualTo("AHORROS_X")
                 .jsonPath("$.balance").isEqualTo(120.0);
+    }
+    /**
+     * Dado que tengo una cuenta llamada Ahorros
+     * cuando la elimino
+     * debe devolver la cuenta con estado cerrado =0
+     * Estados
+     * 0 cerrada
+     * 1 abierta
+     * 2 bloqueada
+     */
+    @Test
+    public void closeAccount(@Autowired WebTestClient client){
+        client.post()
+                .uri("/account/{account}/close","AHORROS_LEO")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("AHORROS_LEO")
+                .jsonPath("$.status").isEqualTo(0);
     }
 }
