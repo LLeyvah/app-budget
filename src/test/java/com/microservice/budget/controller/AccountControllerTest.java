@@ -3,6 +3,12 @@ package com.microservice.budget.controller;
 import com.microservice.budget.controller.request.DepositRequest;
 import com.microservice.budget.domain.Account;
 import org.apache.catalina.core.ApplicationContext;
+import org.dbunit.IDatabaseTester;
+import org.dbunit.JdbcDatabaseTester;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -10,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+
+import java.io.FileInputStream;
 
 /**
  * Operaciones expuestas por el API
@@ -39,7 +47,34 @@ import org.springframework.web.reactive.function.BodyInserters;
 @AutoConfigureWebTestClient
 public class AccountControllerTest {
     //configuramos la conexion a la bd
+    private IDatabaseTester databaseTester;
 
+    protected IDataSet getDataSet() throws Exception {
+        return new FlatXmlDataSetBuilder().build(new
+                FileInputStream("/Users/lionard.leyva/Documents" +
+                "/proyectos/app-budget/src/test/resources/AccountTest.xml"));
+    }
+
+    @BeforeEach
+    protected void setUp() throws Exception {
+
+        databaseTester = new JdbcDatabaseTester("com.mysql.cj.jdbc.Driver",
+                "jdbc:mysql://localhost:53699/db_budget", "root", "root");
+
+        // initialize your dataset here
+        IDataSet dataSet = getDataSet();
+        // ...
+
+        databaseTester.setDataSet(dataSet);
+        // will call default setUpOperation
+        databaseTester.onSetup();
+    }
+
+    @AfterEach
+    protected void tearDown() throws Exception {
+        // will call default tearDownOperation
+        databaseTester.onTearDown();
+    }
 
     public void setUp(ApplicationContext applicationContext) {
     }
@@ -142,6 +177,7 @@ public class AccountControllerTest {
                 .jsonPath("$.name").isEqualTo("AHORROS_X")
                 .jsonPath("$.balance").isEqualTo(120.0);
     }
+
     /**
      * Dado que tengo una cuenta llamada Ahorros
      * cuando la elimino
@@ -152,13 +188,35 @@ public class AccountControllerTest {
      * 2 bloqueada
      */
     @Test
-    public void closeAccount(@Autowired WebTestClient client){
+    public void closeAccount(@Autowired WebTestClient client) {
         client.post()
-                .uri("/account/{account}/close","AHORROS_LEO")
+                .uri("/account/{account}/close", "Cuenta3")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.name").isEqualTo("AHORROS_LEO")
+                .jsonPath("$.name").isEqualTo("Cuenta3")
                 .jsonPath("$.status").isEqualTo(0);
     }
+
+    /**
+     * Dado que tengo una cuenta1 con 100 y cuenta2 otra con 80
+     * cuando transfiero de la cuenta1 50 a cuenta2
+     * El servicio retorna correcto y el estado de cuenta1
+     */
+    @Test
+    public void transferAccountOk(@Autowired WebTestClient client) {
+        AccountTransferRequestTarget accountTransferRequestTarget =
+                new AccountTransferRequestTarget("Cuenta2", 50.0);
+        client.post()
+                .uri("/account/{accountOrigin}/transfer", "Cuenta1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(accountTransferRequestTarget))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody()
+                .jsonPath("$.name").isEqualTo("Cuenta1")
+                .jsonPath("$.balance").isEqualTo(50);
+    }
+
 }

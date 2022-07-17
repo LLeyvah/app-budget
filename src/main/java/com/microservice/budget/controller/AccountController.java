@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 public class AccountController {
 
-    private List<Account> accounts = new ArrayList<>();
+    private final List<Account> accounts = new ArrayList<>();
     // Spring scanea y busca la implemetacion  y a la ves el stereatipo @Service
     @Autowired
     private AccountService service;
@@ -59,7 +59,8 @@ public class AccountController {
 
     @PostMapping(value = {"/account/{accountName}/deposit"})
     @ResponseStatus(HttpStatus.OK)
-    public Account deposit(@RequestBody DepositRequest request, @PathVariable("accountName") String name) {
+    public Account deposit(@RequestBody DepositRequest request,
+                           @PathVariable("accountName") String name) {
         Account accountToDeposit = accountRepository.findByName(name);
         accountToDeposit.deposit(request.getAmount());
         Account savedAccount = accountRepository.save(accountToDeposit);
@@ -74,4 +75,19 @@ public class AccountController {
         return accountRepository.save(account);
     }
 
+    @PostMapping(value = {"/account/{accountName}/transfer"})
+    @ResponseStatus(HttpStatus.OK)
+    public Account transfer(@PathVariable("accountName") String accountName,
+                            @RequestBody AccountTransferRequestTarget transferRequest) {
+
+        Account accountOrigin = accountRepository.findByName(accountName);
+        Account accountTarget = accountRepository.findByName(transferRequest.getAccountTargetName());
+        //Descontamos al origin el monto que estamos indicando en el body
+        accountOrigin.withDraw(transferRequest.getAmountTarget());
+        accountTarget.deposit(transferRequest.getAmountTarget());
+        accountRepository.save(accountOrigin);
+        accountRepository.save(accountTarget);
+        return accountOrigin;
+
+    }
 }
