@@ -242,6 +242,7 @@ public class AccountControllerTest {
      * Da que tengo una cuenta origenbloqueada con 100 y cuent2 con 80
      * cuando transfiero a de la ciuentaorigenbloquead 50 a cuenta
      * el servicio retorna codigo error
+     *
      * @param client
      */
     @Test
@@ -254,10 +255,12 @@ public class AccountControllerTest {
                 .exchange()
                 .expectStatus().is5xxServerError();
     }
+
     /**
      * Da que tengo una cuenta ahorros con 20 y CuentaDestinoBloqueada con 100
      * cuando transfiero a de la cuenta de ahorros 50 a   CuentaDestinoBloqueada
      * el servicio retorna codigo error
+     *
      * @param client
      */
     @Test
@@ -270,10 +273,12 @@ public class AccountControllerTest {
                 .exchange()
                 .expectStatus().is5xxServerError();
     }
+
     /**
      * Da que tengo una cuenta cuentaOrigenBloqueada con 20 y CuentaDestinoBloqueada con 100
      * cuando transfiero a de la cuenta de ahorros 50 a   CuentaDestinoBloqueada
      * el servicio retorna codigo error
+     *
      * @param client
      */
     @Test
