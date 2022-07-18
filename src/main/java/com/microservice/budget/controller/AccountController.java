@@ -77,18 +77,13 @@ public class AccountController {
         return accountRepository.save(account);
     }
 
-    @PostMapping(value = {"/account/{accountName}/transfer"})
+    @PostMapping(value = {"/account/{accountOrigin}/transfer"})
     @ResponseStatus(HttpStatus.OK)
-    public Account transfer(@PathVariable("accountName") String accountName,
-                            @RequestBody AccountTransferRequestTarget transferRequest) {
-        Account accountOrigin = accountRepository.findByName(accountName);
-        Account accountTarget = accountRepository.findByName(transferRequest.getAccountTargetName());
-        //Descontamos al origin el monto que estamos indicando en el body
-        accountOrigin.withDraw(transferRequest.getAmountTarget());
-        accountTarget.deposit(transferRequest.getAmountTarget());
-        Account updatedAccountOrigin = accountRepository.save(accountOrigin);
-        accountRepository.save(accountTarget);
-        return updatedAccountOrigin;
-
+    public Account transfer(@PathVariable("accountOrigin") String accountOrigin,
+                            @RequestBody AccountTransferRequest transferRequest) {
+        Account updatedAccount = service.transfer(accountOrigin
+                , transferRequest.getAccountTargetName()
+                , transferRequest.getAmountTranfer());
+        return updatedAccount;
     }
 }

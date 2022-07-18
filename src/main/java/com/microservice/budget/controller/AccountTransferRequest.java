@@ -1,11 +1,11 @@
 package com.microservice.budget.controller;
 
-public class AccountTransferRequestTarget {
+public class AccountTransferRequest {
 
     private String accountTargetName;
     private Double amountTarget;
 
-    public AccountTransferRequestTarget(String accountTargetName, double amountTarget) {
+    public AccountTransferRequest(String accountTargetName, double amountTarget) {
         this.accountTargetName = accountTargetName;
         this.amountTarget = amountTarget;
     }
@@ -18,7 +18,7 @@ public class AccountTransferRequestTarget {
         this.accountTargetName = accountTargetName;
     }
 
-    public Double getAmountTarget() {
+    public Double getAmountTranfer() {
         return amountTarget;
     }
 

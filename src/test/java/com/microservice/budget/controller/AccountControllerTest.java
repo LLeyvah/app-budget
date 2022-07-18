@@ -205,12 +205,12 @@ public class AccountControllerTest {
      */
     @Test
     public void transferAccountOk(@Autowired WebTestClient client) {
-        AccountTransferRequestTarget accountTransferRequestTarget =
-                new AccountTransferRequestTarget("Cuenta2", 50.0);
+        AccountTransferRequest accountTransferRequest =
+                new AccountTransferRequest("Cuenta2", 50.0);
         client.post()
                 .uri("/account/{accountOrigin}/transfer", "Cuenta1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(accountTransferRequestTarget))
+                .body(BodyInserters.fromValue(accountTransferRequest))
                 .exchange()
                 .expectStatus()
                 .isOk()
