@@ -237,4 +237,37 @@ public class AccountControllerTest {
                 .expectStatus().is5xxServerError();
 
     }
+
+    /**
+     * Da que tengo una cuenta origenbloqueada con 100 y cuent2 con 80
+     * cuando transfiero a de la ciuentaorigenbloquead 50 a cuenta
+     * el servicio retorna codigo error
+     * @param client
+     */
+    @Test
+    public void transferAccountFromAccountOriginBlocked(@Autowired WebTestClient client) {
+        AccountTransferRequest request = new AccountTransferRequest("CuentaOrigenBloqueada", 50.00);
+        client.post()
+                .uri("/account/{nameOrigin}/transfer", "Cuenta3")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+    /**
+     * Da que tengo una cuenta ahorros con 20 y CuentaDestinoBloqueada con 100
+     * cuando transfiero a de la cuenta de ahorros 50 a   CuentaDestinoBloqueada
+     * el servicio retorna codigo error
+     * @param client
+     */
+    @Test
+    public void transferAccountFromAccountTargetBlocked(@Autowired WebTestClient client) {
+        AccountTransferRequest request = new AccountTransferRequest("CuentaOrigenBloqueada", 50.00);
+        client.post()
+                .uri("/account/{nameOrigin}/transfer", "Cuenta3")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
 }
