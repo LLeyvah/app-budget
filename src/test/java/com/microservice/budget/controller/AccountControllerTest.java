@@ -151,11 +151,11 @@ public class AccountControllerTest {
     @Test
     public void getAccountByName(@Autowired WebTestClient client) {
         client.get()
-                .uri("/account/{accountName}", "AHORROS_LEO")
+                .uri("/account/{accountName}", "Cuenta1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .jsonPath("$.name").isEqualTo("AHORROS_LEO");
+                .jsonPath("$.name").isEqualTo("Cuenta1");
 
 
     }
@@ -169,13 +169,13 @@ public class AccountControllerTest {
     public void depositAccount(@Autowired WebTestClient client) {
         DepositRequest request = new DepositRequest(10.0);
         client.post()
-                .uri("/account/{accountName}/deposit", "AHORROS_X")
+                .uri("/account/{accountName}/deposit", "Cuenta3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(request))
                 .exchange()
                 .expectBody()
-                .jsonPath("$.name").isEqualTo("AHORROS_X")
-                .jsonPath("$.balance").isEqualTo(120.0);
+                .jsonPath("$.name").isEqualTo("Cuenta3")
+                .jsonPath("$.balance").isEqualTo(20);
     }
 
     /**

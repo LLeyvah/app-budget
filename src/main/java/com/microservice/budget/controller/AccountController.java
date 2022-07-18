@@ -53,14 +53,16 @@ public class AccountController {
     @PostMapping(value = {"/account/{accountName}/withdraw"})
     @ResponseStatus(HttpStatus.OK)
     public Account withDraw(@RequestBody DepositRequest request, @PathVariable("accountName") String name) {
-        Account account = new Account(name, 15);
+
+        Account account = accountRepository.findByName(name);
+        account.withDraw(request.getAmount());
+        accountRepository.save(account);
         return account;
     }
 
     @PostMapping(value = {"/account/{accountName}/deposit"})
     @ResponseStatus(HttpStatus.OK)
-    public Account deposit(@RequestBody DepositRequest request,
-                           @PathVariable("accountName") String name) {
+    public Account deposit(@RequestBody DepositRequest request, @PathVariable("accountName") String name) {
         Account accountToDeposit = accountRepository.findByName(name);
         accountToDeposit.deposit(request.getAmount());
         Account savedAccount = accountRepository.save(accountToDeposit);
@@ -79,15 +81,14 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     public Account transfer(@PathVariable("accountName") String accountName,
                             @RequestBody AccountTransferRequestTarget transferRequest) {
-
         Account accountOrigin = accountRepository.findByName(accountName);
         Account accountTarget = accountRepository.findByName(transferRequest.getAccountTargetName());
         //Descontamos al origin el monto que estamos indicando en el body
         accountOrigin.withDraw(transferRequest.getAmountTarget());
         accountTarget.deposit(transferRequest.getAmountTarget());
-        accountRepository.save(accountOrigin);
+        Account updatedAccountOrigin = accountRepository.save(accountOrigin);
         accountRepository.save(accountTarget);
-        return accountOrigin;
+        return updatedAccountOrigin;
 
     }
 }
