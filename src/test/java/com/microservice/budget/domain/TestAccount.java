@@ -31,7 +31,7 @@ public class TestAccount {
 
     @Test
     public void testFirstDeposit() {
-        Account account = new Account();
+        Account account = new Account("cuenta",0);
         account.deposit(10.0);
         double balance = account.getBalance();
         assertEquals(10.0, balance);
@@ -125,6 +125,15 @@ public class TestAccount {
         account.setStatus(2);
         assertThrows(UnavailableAccountException.class, () -> {
             account.withDraw(1);
+        });
+    }
+
+    @Test
+    public void testDepositStatusInvalid() {
+        Account account = new Account("", 10000000.00);
+        account.setStatus(0);
+        assertThrows(UnavailableAccountException.class, () -> {
+            account.deposit(1);
         });
     }
 }

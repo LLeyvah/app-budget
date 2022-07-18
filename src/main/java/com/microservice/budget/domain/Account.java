@@ -47,6 +47,9 @@ public class Account {
         if (amount >= Double.MAX_VALUE - getBalance()) {
             throw new InvalidAmountException();
         }
+        if (status != 1) {
+            throw new UnavailableAccountException();
+        }
         this.balance += amount;
     }
 
