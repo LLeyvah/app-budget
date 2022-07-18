@@ -6,7 +6,7 @@ public class AccountTransferRequest {
     private double amount;
 
     public AccountTransferRequest(String accountTargetName, double amount) {
-        this.accountTargetName=accountTargetName;
+        this.accountTargetName = accountTargetName;
         this.amount = amount;
 
     }
