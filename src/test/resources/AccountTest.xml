@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
     <account name='Ahorros' balance='20' status='1'/>
-    <account name='Cuenta1' balance='50' status='1'/>
+    <account name='Cuenta1' balance='90' status='1'/>
     <account name='Cuenta2' balance='80' status='1'/>
     <account name='Cuenta3' balance='10' status='1'/>
     <account name='CuentaOrigenBloqueada' balance='100' status='0'/>

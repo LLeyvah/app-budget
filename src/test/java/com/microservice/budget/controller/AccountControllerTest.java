@@ -206,7 +206,7 @@ public class AccountControllerTest {
     @Test
     public void transferAccountOk(@Autowired WebTestClient client) {
         AccountTransferRequest accountTransferRequest =
-                new AccountTransferRequest("Cuenta2", 50.0);
+                new AccountTransferRequest("Cuenta2", 10.0);
         client.post()
                 .uri("/account/{accountOrigin}/transfer", "Cuenta1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -216,7 +216,25 @@ public class AccountControllerTest {
                 .isOk()
                 .expectBody()
                 .jsonPath("$.name").isEqualTo("Cuenta1")
-                .jsonPath("$.balance").isEqualTo(50);
+                .jsonPath("$.balance").isEqualTo(80);
     }
 
+    /**
+     * Dado que tengo una una cuenta3 con 10 y cuenta2 con 80
+     * cuando transfiero de la cuenta3 50 a cuenta2
+     * el servicio retorna ERROR 500
+     *
+     * @param client
+     */
+    @Test
+    public void transferAccountFromAccountOriginInsufficientFond(@Autowired WebTestClient client) {
+        AccountTransferRequest request = new AccountTransferRequest("Cuenta2", 50.00);
+        client.post()
+                .uri("/account/{nameOrigin}/transfer", "Cuenta3")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+                .expectStatus().is5xxServerError();
+
+    }
 }

@@ -83,7 +83,7 @@ public class AccountController {
                             @RequestBody AccountTransferRequest transferRequest) {
         Account updatedAccount = service.transfer(accountOrigin
                 , transferRequest.getAccountTargetName()
-                , transferRequest.getAmountTranfer());
+                , transferRequest.getAmount());
         return updatedAccount;
     }
 }
